@@ -1,8 +1,32 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+
+const URL = 'wss:ws-sandbox.kraken.com'
 
 class App extends Component {
+  state = {
+    data: [],
+    ws: new WebSocket(URL),
+  }
+
+  componentWillMount() {
+    this.ws.onopen = () => {
+      console.log('connected');
+    }
+
+    this.ws.onmessage = event => {
+      const message = JSON.parse(event.data)
+      this.state.setState({ data: message })
+    }
+
+    this.ws.onclose = () => {
+      console.log('disconnected');
+
+      this.setState({ socket: new WebSocket(URL) })
+    }
+  }
+
   render() {
     return (
       <div className="App">
