@@ -1,3 +1,7 @@
+## CRYPTO WS
+
+Playground application to watch crypto prices, using live feed with web sockets.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
