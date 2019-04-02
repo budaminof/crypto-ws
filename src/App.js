@@ -1,9 +1,18 @@
+/* eslint-disable react/no-direct-mutation-state */
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.scss';
 
-const URL = 'wss:ws-sandbox.kraken.com'
-
+const URL = 'wss:ws-sandbox.kraken.com';
+const subscribe = {
+  event: "subscribe",
+  pair: [
+    "XBT/USD"
+  ],
+  subscription: {
+    name: "ticker",
+  }
+};
 class App extends Component {
   state = {
     data: [],
@@ -11,19 +20,19 @@ class App extends Component {
   }
 
   componentWillMount() {
-    this.ws.onopen = () => {
+    this.state.ws.onopen = () => {
       console.log('connected');
+      this.state.ws.send(JSON.stringify(subscribe));
     }
 
-    this.ws.onmessage = event => {
+    this.state.ws.onmessage = event => {
       const message = JSON.parse(event.data)
-      this.state.setState({ data: message })
+      console.log(message);
     }
 
-    this.ws.onclose = () => {
+    this.state.ws.onclose = () => {
       console.log('disconnected');
-
-      this.setState({ socket: new WebSocket(URL) })
+      this.setState({ ws: new WebSocket(URL) })
     }
   }
 
@@ -32,17 +41,9 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
+          <h2>
+            CRYPTO WATCH
+          </h2>
         </header>
       </div>
     );
