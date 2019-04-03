@@ -1,7 +1,7 @@
 /* eslint-disable react/no-direct-mutation-state */
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.scss';
+import Data from './Data.component';
 
 const URL = 'wss:ws-sandbox.kraken.com';
 const subscribe = {
@@ -9,8 +9,9 @@ const subscribe = {
   pair: [
     "XBT/USD"
   ],
-  subscription: {
-    name: "ticker",
+  "subscription": {
+    name: "ohlc",
+    interval: 5
   }
 };
 class App extends Component {
@@ -27,7 +28,9 @@ class App extends Component {
 
     this.state.ws.onmessage = event => {
       const message = JSON.parse(event.data)
-      console.log(message);
+      if (Array.isArray(message)) {
+        this.setState({ data: message[1] });
+      }
     }
 
     this.state.ws.onclose = () => {
@@ -39,12 +42,13 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
+        <header className={this.state.data.length ? 'short-App-header' : 'App-header'}>
           <h2>
-            CRYPTO WATCH
+            XBT WATCH
           </h2>
+          {this.state.data.length ? null : <h3>connecting to kraken</h3>}
         </header>
+        {this.state.data.length ? <Data data={this.state.data} /> : null}
       </div>
     );
   }
